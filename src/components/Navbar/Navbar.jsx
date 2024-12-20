@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { assets } from "../../assets/assets";
 import "./Navbar.css";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [menu, setMenu] = useState("home");
@@ -8,7 +9,10 @@ const Navbar = () => {
   return (
     <header>
       <nav className="navbar">
-        <img className="logo" src={assets.logo} alt="logo" />
+        <Link to={"/"}>
+          {" "}
+          <img className="logo" src={assets.logo} alt="logo" />
+        </Link>
         <ul className="navbar navbar-menu">
           <li
             onClick={() => setMenu("home")}
