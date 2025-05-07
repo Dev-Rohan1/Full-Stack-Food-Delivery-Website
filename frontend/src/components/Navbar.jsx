@@ -1,11 +1,18 @@
+import { X, Menu } from "lucide-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { assets } from "../assets/assets";
-import { X } from "lucide-react";
 
 const Navbar = () => {
   const [menu, setMenu] = useState("home");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  const navItems = [
+    { label: "Home", key: "home", id: "home" },
+    { label: "Menu", key: "menu", id: "menu" },
+    { label: "Mobile App", key: "mobile-app", id: "mobile-app" },
+    { label: "Contact Us", key: "contact-us", id: "contact-us" },
+  ];
 
   return (
     <header>
@@ -17,12 +24,7 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <ul className="hidden md:flex items-center gap-6">
-          {[
-            { label: "Home", key: "home", id: "home" },
-            { label: "Menu", key: "menu", id: "menu" },
-            { label: "Mobile App", key: "mobile-app", id: "mobile-app" },
-            { label: "Contact Us", key: "contact-us", id: "contact-us" },
-          ].map(({ label, key, id }) => (
+          {navItems.map(({ label, key, id }) => (
             <li
               key={key}
               onClick={() => {
@@ -30,49 +32,46 @@ const Navbar = () => {
                 setShowMobileMenu(false);
               }}
               className={`cursor-pointer hover:text-[tomato] transition-colors ${
-                menu === key ? "font-medium text-[tomato]" : "text-gray-700"
+                menu === key
+                  ? "font-medium text-[tomato] border-b-2 border-b-[tomato]"
+                  : "text-gray-700"
               }`}
             >
-              <Link to={`#${id}`}>{label}</Link>
+              <a href={`#${id}`}>{label}</a>
             </li>
           ))}
         </ul>
 
-        {/* Desktop Actions and Mobile Menu Button */}
+        {/* Desktop Actions + Mobile Button */}
         <div className="flex items-center gap-4">
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-4">
-            <button className="text-gray-700 hover:text-[tomato] transition-colors">
+          {/* Desktop Only Actions */}
+          <div className="hidden md:flex items-center gap-8">
+            <button
+              aria-label="Search"
+              className="text-gray-700 hover:text-[tomato] transition-colors"
+            >
               <img className="w-5" src={assets.search_icon} alt="Search" />
             </button>
-            <button className="text-gray-700 hover:text-[tomato] transition-colors">
+            <button
+              aria-label="Basket"
+              className="text-gray-700 hover:text-[tomato] transition-colors relative"
+            >
               <img className="w-5" src={assets.basket_icon} alt="Basket" />
+              <span className="absolute top-[-6px] right-[-10px] bg-[tomato] text-white text-xs w-2 h-2 flex items-center justify-center rounded-full"></span>
             </button>
-            <button className="bg-[tomato] text-white font-medium px-4 py-1 rounded-md hover:bg-[#ff6347] transition-colors">
+            <button className="bg-[tomato] text-white font-medium px-4 py-1 rounded hover:bg-[#ff6347] transition-colors cursor-pointer text-sm">
               Login
             </button>
           </div>
 
-          {/* Mobile menu button - now hidden when menu is open */}
+          {/* Mobile Menu Toggle */}
           {!showMobileMenu && (
             <button
               onClick={() => setShowMobileMenu(true)}
               className="md:hidden text-gray-700 hover:text-[tomato] focus:outline-none"
+              aria-label="Open menu"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
+              <Menu className="cursor-pointer" />
             </button>
           )}
         </div>
@@ -87,7 +86,11 @@ const Navbar = () => {
             className="fixed inset-0 backdrop-blur-[1px]"
             onClick={() => setShowMobileMenu(false)}
           ></div>
-          <div className="relative h-full w-4/5 max-w-[300px] bg-white border-r border-r-gray-200">
+
+          <div
+            className="relative h-full w-4/5 max-w-[300px] bg-white border-r border-r-gray-200"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center px-4 py-[13px] border-b border-gray-200">
               <Link to="/" onClick={() => setShowMobileMenu(false)}>
                 <img
@@ -99,17 +102,14 @@ const Navbar = () => {
               <button
                 onClick={() => setShowMobileMenu(false)}
                 className="text-gray-700 hover:text-[tomato] p-1"
+                aria-label="Close menu"
               >
                 <X size={22} className="text-gray-700 cursor-pointer" />
               </button>
             </div>
+
             <ul className="flex flex-col p-4">
-              {[
-                { label: "Home", key: "home", id: "home" },
-                { label: "Menu", key: "menu", id: "menu" },
-                { label: "Mobile App", key: "mobile-app", id: "mobile-app" },
-                { label: "Contact Us", key: "contact-us", id: "contact-us" },
-              ].map(({ label, key, id }) => (
+              {navItems.map(({ label, key, id }) => (
                 <li
                   key={key}
                   onClick={() => {
@@ -120,21 +120,28 @@ const Navbar = () => {
                     menu === key ? "font-medium text-[tomato]" : "text-gray-700"
                   }`}
                 >
-                  <Link to={`#${id}`} className="block">
+                  <a href={`#${id}`} className="block">
                     {label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
+
             <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
               <div className="flex items-center justify-center gap-4">
-                <button className="text-gray-700 hover:text-[tomato] transition-colors">
+                <button
+                  aria-label="Search"
+                  className="text-gray-700 hover:text-[tomato] transition-colors"
+                >
                   <img className="w-5" src={assets.search_icon} alt="Search" />
                 </button>
-                <button className="text-gray-700 hover:text-[tomato] transition-colors">
+                <button
+                  aria-label="Basket"
+                  className="text-gray-700 hover:text-[tomato] transition-colors"
+                >
                   <img className="w-5" src={assets.basket_icon} alt="Basket" />
                 </button>
-                <button className="bg-[tomato] text-white font-medium px-4 py-1 rounded-md hover:bg-[#ff6347] transition-colors">
+                <button className="bg-[tomato] text-white font-medium px-4 py-1 rounded-md hover:bg-[#ff6347] transition-colors cursor-pointer text-sm">
                   Login
                 </button>
               </div>
