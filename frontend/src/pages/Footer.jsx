@@ -3,7 +3,7 @@ import { assets } from "../assets/assets";
 
 const Footer = () => {
   return (
-    <footer className="bg-black/85 mt-16 text-white pt-12 pb-6">
+    <footer className="bg-black/85 mt-16 text-white pt-12 pb-6" id="contact-us">
       <div className="w-[90%] m-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8">
           {/* Logo and Social Media */}

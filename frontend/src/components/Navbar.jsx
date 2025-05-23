@@ -1,11 +1,14 @@
 import { X, Menu } from "lucide-react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { assets } from "../assets/assets";
+import { StoreContext } from "../contexts/StoreContext";
 
-const Navbar = () => {
+const Navbar = ({ setLoginState }) => {
   const [menu, setMenu] = useState("home");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  const { getTotalCartAmount } = useContext(StoreContext);
 
   const navItems = [
     { label: "Home", key: "home", id: "home" },
@@ -44,7 +47,7 @@ const Navbar = () => {
 
         {/* Desktop Actions + Mobile Button */}
         <div className="flex items-center gap-4">
-          {/* Desktop Only Actions */}
+          {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-8">
             <button
               aria-label="Search"
@@ -52,23 +55,31 @@ const Navbar = () => {
             >
               <img className="w-5" src={assets.search_icon} alt="Search" />
             </button>
-            <button
+
+            <Link
+              to="/cart"
               aria-label="Basket"
               className="text-gray-700 hover:text-[tomato] transition-colors relative"
             >
               <img className="w-5" src={assets.basket_icon} alt="Basket" />
-              <span className="absolute top-[-6px] right-[-10px] bg-[tomato] text-white text-xs w-2 h-2 flex items-center justify-center rounded-full"></span>
-            </button>
-            <button className="bg-[tomato] text-white font-medium px-4 py-1 rounded hover:bg-[#ff6347] transition-colors cursor-pointer text-sm">
+              {getTotalCartAmount() > 0 && (
+                <span className="absolute top-[-6px] right-[-10px] bg-[tomato] text-white text-xs w-2 h-2 flex items-center justify-center rounded-full"></span>
+              )}
+            </Link>
+
+            <button
+              onClick={() => setLoginState(true)}
+              className="bg-[tomato] text-white font-medium px-4 py-1 rounded hover:bg-[#ff6347] transition-colors cursor-pointer text-sm"
+            >
               Login
             </button>
           </div>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Menu Button */}
           {!showMobileMenu && (
             <button
               onClick={() => setShowMobileMenu(true)}
-              className="md:hidden text-gray-700 hover:text-[tomato] focus:outline-none"
+              className="md:hidden text-gray-700 hover:text-[tomato]"
               aria-label="Open menu"
             >
               <Menu className="cursor-pointer" />
@@ -78,7 +89,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         <div
-          className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ease-in-out ${
+          className={`fixed inset-0 z-40 md:hidden transition-transform duration-300 ease-in-out ${
             showMobileMenu ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -88,10 +99,10 @@ const Navbar = () => {
           ></div>
 
           <div
-            className="relative h-full w-4/5 max-w-[300px] bg-white border-r border-r-gray-200"
+            className="relative h-full w-4/5 max-w-[300px] bg-white border-r border-gray-200"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center px-4 py-[13px] border-b border-gray-200">
+            <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
               <Link to="/" onClick={() => setShowMobileMenu(false)}>
                 <img
                   className="w-[100px]"
@@ -104,7 +115,7 @@ const Navbar = () => {
                 className="text-gray-700 hover:text-[tomato] p-1"
                 aria-label="Close menu"
               >
-                <X size={22} className="text-gray-700 cursor-pointer" />
+                <X size={22} />
               </button>
             </div>
 
@@ -135,13 +146,26 @@ const Navbar = () => {
                 >
                   <img className="w-5" src={assets.search_icon} alt="Search" />
                 </button>
-                <button
+
+                <Link
+                  to="/cart"
                   aria-label="Basket"
-                  className="text-gray-700 hover:text-[tomato] transition-colors"
+                  className="relative text-gray-700 hover:text-[tomato] transition-colors"
+                  onClick={() => setShowMobileMenu(false)}
                 >
                   <img className="w-5" src={assets.basket_icon} alt="Basket" />
-                </button>
-                <button className="bg-[tomato] text-white font-medium px-4 py-1 rounded-md hover:bg-[#ff6347] transition-colors cursor-pointer text-sm">
+                  {getTotalCartAmount() > 0 && (
+                    <span className="absolute top-[-6px] right-[-10px] bg-[tomato] text-white text-xs w-2 h-2 flex items-center justify-center rounded-full"></span>
+                  )}
+                </Link>
+
+                <button
+                  onClick={() => {
+                    setLoginState(true);
+                    setShowMobileMenu(false);
+                  }}
+                  className="bg-[tomato] text-white font-medium px-4 py-1 rounded-md hover:bg-[#ff6347] transition-colors cursor-pointer text-sm"
+                >
                   Login
                 </button>
               </div>
