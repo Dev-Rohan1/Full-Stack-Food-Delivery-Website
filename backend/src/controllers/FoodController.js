@@ -1,4 +1,5 @@
 import Food from "../models/Food.js";
+import fs from "fs";
 
 export const addFoodController = async (req, res) => {
   const { name, description, price, category } = req.body;
@@ -10,8 +11,6 @@ export const addFoodController = async (req, res) => {
       .json({ success: false, message: "All fields are required" });
   }
 
-  console.log(imageFile.filename);
-
   try {
     const newFood = new Food({
       name,
@@ -20,8 +19,6 @@ export const addFoodController = async (req, res) => {
       category,
       image: imageFile.filename,
     });
-
-    // console.log(newFood);
 
     await newFood.save();
 
@@ -35,6 +32,67 @@ export const addFoodController = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Food addition failed",
+    });
+  }
+};
+
+export const foodList = async (req, res) => {
+  try {
+    const foodList = await Food.find({});
+
+    if (!foodList) {
+      return res.json({
+        success: false,
+        message: "Food fetch failed",
+      });
+    }
+
+    return res.json({
+      succcess: true,
+      message: "Food fetched successfully",
+      foodListData: foodList,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "Food fetch failed",
+    });
+  }
+};
+
+export const deleteFoodController = async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({
+      success: false,
+      message: "Food ID is required",
+    });
+  }
+
+  try {
+    const deleteFood = await Food.findByIdAndDelete(id);
+    fs.unlink(`uploads/${deleteFood.image}`, (err) => {
+      if (err) {
+        console.error("Error deleting image file:", err);
+      }
+    });
+
+    if (!deleteFood) {
+      return res.status(404).json({
+        success: false,
+        message: "Food not found",
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "food deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Food deletion failed",
     });
   }
 };
